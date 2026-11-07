@@ -3,21 +3,18 @@ var BilingualPreferences = {
   id: 'bilingual-metadata-preferences',
   async start(plugin) {
     this.plugin = plugin;
-    Zotero.BilingualMetadataPreferences = this;
     try {
       await Zotero.PreferencePanes.register({
         pluginID: 'bilingual-metadata@damao', id: this.id,
         label: '双语引用', src: 'src/preferences.xhtml',
-        image: 'icon-48.png'
+        image: 'icon-48.png', scripts: ['src/preferencesPane.js']
       });
     } catch (e) {
-      delete Zotero.BilingualMetadataPreferences;
       throw e;
     }
   },
   stop() {
     Zotero.PreferencePanes.unregister(this.id);
-    if (Zotero.BilingualMetadataPreferences === this) delete Zotero.BilingualMetadataPreferences;
     this.plugin = null;
   },
   mainWindow() {

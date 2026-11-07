@@ -1,12 +1,11 @@
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
       xmlns:html="http://www.w3.org/1999/xhtml"
-      id="bilingual-metadata-pane"
-      onload="event.waitUntil(Zotero.BilingualMetadataPreferences.init(window))">
-  <vbox class="main-section">
+      id="bilingual-metadata-pane">
+  <vbox class="main-section" onload="event.waitUntil(Zotero.BilingualPreferencesPane.init(window))">
     <groupbox>
       <label><html:h2>创建双语引用样式</html:h2></label>
       <html:p>选择 Zotero 已安装的样式或导入 CSL，设置中英文顺序、换行和括号。生成独立副本，通过校验并预览后再保存、安装。</html:p>
-      <hbox><button id="bilingual-pref-create" label="创建双语 CSL…"/></hbox>
+      <hbox><button id="bilingual-pref-create" label="创建双语 CSL…" oncommand="Zotero.BilingualPreferencesPane.run(event, 'create')"/></hbox>
       <html:p>目前支持可识别的顺序编码制期刊样式；复杂布局或不支持的样式会提示原因。原样式保留。</html:p>
       <html:p>安装后，在 Word 的文档首选项中选择新生成的“关联双语”样式，再刷新引用。</html:p>
     </groupbox>
@@ -14,7 +13,7 @@
       <label><html:h2 id="bilingual-pref-count">已安装的关联双语样式</html:h2></label>
       <html:p id="bilingual-pref-empty">尚未安装关联双语样式。请点击上方按钮创建。</html:p>
       <html:ul id="bilingual-pref-styles" style="overflow-wrap:anywhere; max-height:200px; overflow-y:auto;"/>
-      <hbox><button id="bilingual-pref-refresh" label="刷新样式列表"/></hbox>
+      <hbox><button id="bilingual-pref-refresh" label="刷新样式列表" oncommand="Zotero.BilingualPreferencesPane.run(event, 'refresh')"/></hbox>
       <html:p>需要删除样式时，请到 Zotero 设置的“引用 → 样式管理器”中操作。</html:p>
     </groupbox>
     <groupbox>
@@ -22,8 +21,8 @@
       <html:label for="bilingual-pref-roots">MinerU 根目录（多个目录用 | 分隔）</html:label>
       <html:input id="bilingual-pref-roots" type="text" style="box-sizing:border-box; width:100%; margin:8px 0;"/>
       <hbox>
-        <button id="bilingual-pref-save-roots" label="保存目录"/>
-        <button id="bilingual-pref-index" label="重建本地索引…"/>
+        <button id="bilingual-pref-save-roots" label="保存目录" oncommand="Zotero.BilingualPreferencesPane.run(event, 'save-roots')"/>
+        <button id="bilingual-pref-index" label="重建本地索引…" oncommand="Zotero.BilingualPreferencesPane.run(event, 'index')"/>
       </hbox>
       <html:p>仅读取本地解析文件，不上传 PDF。日常处理复用索引；目录或解析文件有变化时可手动重建。未配置 MinerU 时仍可使用其他元数据来源。</html:p>
     </groupbox>

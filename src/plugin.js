@@ -62,6 +62,9 @@ var BilingualPlugin = {
   },
   attach(w) {
     if (this.windows.has(w)) return;
+    w.BilingualPlugin=this;
+    w.BilingualStyleAdapter=BilingualStyleAdapter;
+    w.BilingualLinkedCitations=BilingualLinkedCitations;
     const popup = w.document.getElementById('zotero-itemmenu');
     if (!popup) return;
     this.windows.add(w);
@@ -77,7 +80,7 @@ var BilingualPlugin = {
       popup.appendChild(el);
     }
   },
-  detach(w) { for (const id of ['run','english-item','check-link','adapt-style','config','refresh','undo']) w.document.getElementById('bilingual-' + id)?.remove(); this.windows.delete(w); },
+  detach(w) { for (const id of ['run','english-item','check-link','adapt-style','config','refresh','undo']) w.document.getElementById('bilingual-' + id)?.remove();if(w.BilingualPlugin===this)delete w.BilingualPlugin;if(w.BilingualStyleAdapter===BilingualStyleAdapter)delete w.BilingualStyleAdapter;if(w.BilingualLinkedCitations===BilingualLinkedCitations)delete w.BilingualLinkedCitations;this.windows.delete(w); },
   stop() { BilingualPreferences.stop();BilingualLinkedCitations.stop();for (const w of this.windows) this.detach(w); for (const d of this.dialogs) d.close(); },
   async checkLinked(w) {
     const items=w.ZoteroPane.getSelectedItems().filter(i=>i.isRegularItem());

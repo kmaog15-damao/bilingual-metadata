@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "中文文献双语元数据",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "解决中文期刊投稿双语引用的要求",
   "author": "damao",
   "homepage_url": "https://github.com/kmaog15-damao/bilingual-metadata",
