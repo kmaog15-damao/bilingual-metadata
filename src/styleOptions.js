@@ -1,0 +1,9 @@
+window.addEventListener('DOMContentLoaded',()=>{
+ const args=window.arguments[0],d=args.defaults||{},get=id=>document.getElementById(id),create=name=>document.createElementNS('http://www.w3.org/1999/xhtml',name);
+ let selected=d.styleID||args.styles[0]?.id||'';
+ const render=()=>{get('style').textContent='';const matches=args.styles.filter(s=>s.title.toLowerCase().includes(get('search').value.toLowerCase()));if(!matches.length){const p=create('p');p.textContent='未找到样式，请修改搜索词或从文件导入。';get('style').appendChild(p);}for(const s of matches){const label=create('label'),r=create('input'),text=create('span');r.type='radio';r.name='installed-style';r.value=s.id;r.checked=selected===s.id;r.onchange=()=>{selected=s.id;};text.textContent=s.title;label.appendChild(r);label.appendChild(text);get('style').appendChild(label);}};
+ get('source-file').checked=d.source==='file';get('source-installed').checked=d.source!=='file';get('path').value=d.path||'';get('order-chinese').checked=d.englishFirst===false;get('order-english').checked=d.englishFirst!==false;
+ for(const id of ['newline','chineseLabel'])get(id).checked=!!d[id];get('brackets').checked=d.brackets!==false;
+ const toggle=()=>{get('installed').hidden=get('source-file').checked;get('file').hidden=!get('source-file').checked;};toggle();render();get('source-installed').onchange=toggle;get('source-file').onchange=toggle;get('search').oninput=render;
+ get('cancel').onclick=()=>window.close();get('next').onclick=()=>{const r={source:get('source-file').checked?'file':'installed',styleID:selected,path:get('path').value.trim().replace(/^"|"$/g,''),englishFirst:get('order-english').checked,newline:get('newline').checked,brackets:get('brackets').checked,chineseLabel:get('chineseLabel').checked};if(r.source==='installed'?!r.styleID:!r.path){get('error').textContent='请选择样式或填写文件路径。';return;}args.result=r;window.close();};
+});

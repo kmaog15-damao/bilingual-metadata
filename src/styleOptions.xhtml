@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><title>生成双语引用样式</title><style>
+body{font:15px system-ui;margin:24px;background:#f5f6f8;color:#222}h1{font-size:22px}label{display:block;margin:16px 0 6px}select,input[type=text]{box-sizing:border-box;width:100%;padding:8px}fieldset{margin-top:16px;border:1px solid #ccc}fieldset label{margin:10px 0}button{padding:8px 18px;margin:16px 8px 0 0}p{line-height:1.5}#error{color:#a22}
+:root{color-scheme:light}
+select,input[type=text]{appearance:auto;-moz-appearance:auto;background-color:#fff!important;color:#222!important;border:1px solid #8b9098;border-radius:4px;font:inherit;opacity:1}
+select:not([size]){min-height:38px}
+select[size]{min-height:150px}
+option,optgroup{background-color:#fff!important;color:#222!important;font:inherit;opacity:1}
+option:checked{background-color:#dceaff!important;color:#152f55!important}
+select:focus-visible,input[type=text]:focus-visible{outline:2px solid #3978ce;outline-offset:2px}
+[hidden]{display:none!important}
+#style{max-height:180px;overflow:auto;background:#fff;border:1px solid #8b9098;border-radius:4px;padding:8px}#style label{display:flex;align-items:center;gap:8px;margin:0;padding:8px;cursor:pointer}#style label:has(input:checked){background:#dceaff;color:#152f55}input[type=radio],input[type=checkbox]{appearance:auto;flex-shrink:0} </style><script src="chrome://bilingual-metadata/content/styleOptions.js"></script></head><body>
+<h1>生成双语引用样式</h1><p>选择期刊样式并设置双语排版。原样式保留，下一步预览后再保存。</p>
+<fieldset><legend>样式来源</legend><label><input type="radio" name="source" id="source-installed" checked="checked"/> Zotero 已安装样式</label><label><input type="radio" name="source" id="source-file"/> 从 CSL 文件导入</label></fieldset>
+<div id="installed"><label for="search">搜索已安装样式</label><input type="text" id="search" placeholder="输入期刊或样式名称"/><label for="style">选择样式</label><div id="style" role="group" aria-label="选择样式"></div></div>
+<div id="file" hidden="hidden"><label for="path">CSL 文件完整路径</label><input type="text" id="path" placeholder="例如 D:\styles\journal.csl"/></div>
+<fieldset><legend>双语顺序</legend><label><input type="radio" name="order" id="order-english" checked="checked"/> 英文在前</label><label><input type="radio" name="order" id="order-chinese"/> 中文在前</label></fieldset>
+<fieldset><legend>参考文献排版</legend><label><input id="newline" type="checkbox"/> 两种语言分别换行</label><label><input id="brackets" type="checkbox" checked="checked"/> 后一种语言加方括号</label><label><input id="chineseLabel" type="checkbox"/> 中文部分末尾标注“（中文文献）”</label></fieldset>
+<p>支持部分顺序编码制样式，包括可识别中英文段落的已有双语样式。引用时从关联英文条目读取，插件需保持启用。生成前检查兼容性，投稿前仍需核对期刊要求。</p><p id="error" role="alert"></p><button id="next">生成预览</button><button id="cancel">取消</button>
+</body></html>
