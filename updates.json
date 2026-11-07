@@ -5,7 +5,7 @@
         {
           "version": "0.10.1",
           "update_link": "https://github.com/kmaog15-damao/bilingual-metadata/releases/download/v0.10.1/bilingual-metadata-0.10.1-kmaog15-damao.xpi",
-          "update_hash": "sha256:2cae7bc5cd436a3faac64f6808fd99ca6ddeb88f5eefc1e2b86cda57c7e9f273",
+          "update_hash": "sha256:282f926caf0682b1389058feb4c6dee0713cce7e793b6c428cc3fc7c81742e62",
           "applications": {
             "zotero": {
               "strict_min_version": "10.0",
