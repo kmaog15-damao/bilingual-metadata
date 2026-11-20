@@ -8,8 +8,9 @@ var BilingualPreferencesPane = {
   },
   async init(w) {
     try {
-      this.refresh(w);
       this.element(w,'roots').value=Zotero.Prefs.get('extensions.bilingual-metadata.roots',true)||'';
+      await Zotero.Styles.init();
+      this.refresh(w);
       this.element(w,'bridge').textContent=this.mainWindow().BilingualLinkedCitations?.installed
         ?'关联引用已启动。引用中文原条目时，新样式会读取与它关联的英文条目。'
         :'关联引用尚未启动，请重启 Zotero 并检查错误日志。';
@@ -32,7 +33,7 @@ var BilingualPreferencesPane = {
     button.disabled=true;status.textContent='正在处理…';
     try {
       const main=this.mainWindow(),plugin=main.BilingualPlugin;
-      if(action==='create'){await main.BilingualStyleAdapter.run(main,plugin);this.refresh(w);}
+      if(action==='create'){await main.BilingualStyleAdapter.run(main,plugin,w);this.refresh(w);}
       else if(action==='refresh')this.refresh(w);
       else if(action==='save-roots'){
         const roots=this.element(w,'roots').value.split('|').map(s=>s.trim()).filter(Boolean);
@@ -43,7 +44,7 @@ var BilingualPreferencesPane = {
         await plugin.refreshIndex(main);
       }
       status.textContent='操作完成。';
-    } catch(e) { this.report(w,e); }
+    } catch(e) { this.report(w,e);Zotero.alert(w,'双语引用',e.message||String(e)); }
     finally { button.disabled=false;this.busy=false; }
   }
 };

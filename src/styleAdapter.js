@@ -100,13 +100,13 @@ var BilingualStyleAdapter = {
       for(const attr of ['variable','is-numeric'])if(n.hasAttribute(attr))n.setAttribute(attr,n.getAttribute(attr).split(/\s+/).map(v=>mapping[v]||v).join(' '));
     }
   },
-  async run(w,plugin) {
+  async run(w,plugin,dialogParent=w) {
     if(!BilingualLinkedCitations.installed)throw Error('关联引用功能未能启动，请重启 Zotero 后重试，或查看错误日志。');
     await Zotero.Styles.init();
     const styles=Zotero.Styles.getVisible().map(s=>({id:s.styleID,title:s.title})).sort((a,b)=>a.title.localeCompare(b.title));
     let defaults={};try{defaults=JSON.parse(Zotero.Prefs.get('extensions.bilingual-metadata.styleOptions',true)||'{}');}catch(e){}
     const args={styles,defaults};
-    w.openDialog('chrome://bilingual-metadata/content/styleOptions.xhtml','','chrome,modal,centerscreen,resizable,width=700,height=650',args);
+    dialogParent.openDialog('chrome://bilingual-metadata/content/styleOptions.xhtml','','chrome,modal,centerscreen,resizable,width=700,height=650',args);
     if(!args.result)return;
     const options=args.result;
     const xml=options.source==='file'?await plugin.IO.readUTF8(options.path):Zotero.Styles.get(options.styleID).getXML();
