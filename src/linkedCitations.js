@@ -26,7 +26,7 @@ var BilingualLinkedCitations = {
     for(const key of ['original-title','original-author','original-container-title','collection-title','original-publisher','original-publisher-place'])delete out[key];
     // The translated metadata record still describes a Chinese publication. Its
     // English title must nevertheless use the single-language bibliography branch.
-    if(!/[\u3400-\u9fff]/.test(out.title || '')){if(/[A-Za-z]/.test(out.title || '') && /^zh/i.test(out.language || ''))out.language='en-US';return out;}
+    if(!/[\u3400-\u9fff]/.test(out.title || '')){if(/[A-Za-z]/.test(out.title || '') && /^zh/i.test(out.language || ''))out.language='en-US';out['original-publisher-place']='bilingual-native-english';return out;}
     let source;
     try{source=input instanceof Zotero.Item?input:Zotero.Items.get(input);}catch(e){return out;}
     if(!source || source.deleted || source.hasTag(BilingualEnglishItems.tag))return out;

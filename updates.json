@@ -3,6 +3,17 @@
     "bilingual-metadata@damao": {
       "updates": [
         {
+          "version": "0.10.6",
+          "update_link": "https://github.com/kmaog15-damao/bilingual-metadata/releases/download/v0.10.6/bilingual-metadata-0.10.6.xpi",
+          "update_hash": "sha256:7ee9ec9661de5d59f7c04f0770a4639134a511009590a105d9c1b9b3ee26849a",
+          "applications": {
+            "zotero": {
+              "strict_min_version": "10.0",
+              "strict_max_version": "10.*"
+            }
+          }
+        },
+        {
           "version": "0.10.5",
           "update_link": "https://github.com/kmaog15-damao/bilingual-metadata/releases/download/v0.10.5/bilingual-metadata-0.10.5.xpi",
           "update_hash": "sha256:fb5b65545868aa99b8c69c9a50e9e9ee0042046a709e5d5c93f597bd231b4267",

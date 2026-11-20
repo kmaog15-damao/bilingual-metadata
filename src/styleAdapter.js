@@ -61,6 +61,10 @@ var BilingualStyleAdapter = {
     for(const names of rendered('names').filter(n=>n.getAttribute('variable')==='author')){
       for(const old of children(names).filter(n=>n.localName==='et-al'))names.removeChild(old);
       const etal=make('et-al');etal.setAttribute('term','et-al');names.insertBefore(etal,children(names).find(n=>n.localName==='substitute')||null);
+      const choose=make('choose'),native=make('if'),other=make('else');
+      native.setAttribute('variable','original-publisher-place');
+      const englishNames=names.cloneNode(true);children(englishNames).find(n=>n.localName==='et-al').setAttribute('term','and others');
+      native.appendChild(englishNames);names.parentNode.replaceChild(choose,names);other.appendChild(names);choose.appendChild(native);choose.appendChild(other);
     }
     let locale=all('locale').find(n=>!n.getAttribute('xml:lang'));
     if(!locale){locale=make('locale');root.insertBefore(locale,all('macro')[0] || all('citation')[0] || bib);}
@@ -71,7 +75,7 @@ var BilingualStyleAdapter = {
     for(const loc of all('locale')){
       let ts=children(loc).find(n=>n.localName==='terms');
       if(!ts){ts=make('terms');loc.appendChild(ts);}
-      const lang=loc.getAttribute('xml:lang')||root.getAttribute('default-locale')||'zh-CN';
+      const lang=loc.getAttribute('xml:lang')||'zh-CN';
       for(const [key,value] of [['and others','et al.'],['et-al',/^en\b/i.test(lang)?'et al.':'等']]){
         let term=children(ts).find(n=>n.getAttribute('name')===key);
         if(!term){term=make('term');term.setAttribute('name',key);ts.appendChild(term);}

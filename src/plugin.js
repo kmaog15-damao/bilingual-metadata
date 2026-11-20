@@ -239,7 +239,7 @@ var BilingualPlugin = {
         const check = doc.createElement('input'); check.type = 'checkbox'; check.checked = !!(candidate.title || candidate.authors || candidate.journal); box.appendChild(check);
         const note = doc.createElement('small');
         note.textContent = Object.entries(result.sources).map(([k,v])=>`${k} 来源：${v}`).concat(result.warnings).join('\n') || '未找到已核验信息，可手动填写。';
-        if(englishMode && await BilingualEnglishItems.find(item)) {check.checked=false;check.disabled=true;note.textContent+='\n已有关联英文引用条目，本次不重复创建。可在原条目的「相关」中打开它。';}
+        if(englishMode && await BilingualEnglishItems.find(item)) {check.checked=true;note.textContent+='\n已有关联英文引用条目，确认后将更新该英文条目，不重复创建。';}
         box.appendChild(note);
         const inputs = {};
         for (const [key,label,value] of [
@@ -266,15 +266,15 @@ var BilingualPlugin = {
         save.disabled = true;
         try {
           if(englishMode) {
-            const plans=rows.filter(r=>r.check.checked && !r.check.disabled).map(r=>({id:r.item.id,key:r.item.key,libraryID:r.item.libraryID,values:{title:r.inputs['original-title'].value.trim(),authors:r.inputs['original-author'].value.trim(),journal:r.inputs['original-container-title'].value.trim()}}));
+            const plans=rows.filter(r=>r.check.checked && !r.check.disabled).map(r=>({id:r.item.id,key:r.item.key,libraryID:r.item.libraryID,updateExisting:true,values:{title:r.inputs['original-title'].value.trim(),authors:r.inputs['original-author'].value.trim(),journal:r.inputs['original-container-title'].value.trim()}}));
             if(!plans.length){status.textContent='没有需要创建的英文条目。已有的英文条目可从原条目的「相关」中打开。';save.disabled=false;return;}
             for(const plan of plans) BilingualEnglishItems.validate(plan.values);
-            if(!Services.prompt.confirm(d,'确认创建英文引用条目',`将新建 ${plans.length} 条独立的英文元数据条目，并与中文原条目关联。不会修改原条目的 Extra，也不会复制附件。是否继续？`)){save.disabled=false;return;}
+            if(!Services.prompt.confirm(d,'确认创建英文引用条目',`将创建或更新 ${plans.length} 条独立的英文元数据条目，并与中文原条目关联。不会修改原条目的 Extra，也不会复制附件。是否继续？`)){save.disabled=false;return;}
             committing=true;doc.getElementById('cancel').disabled=true;
             const result=await BilingualEnglishItems.create(plans);
             const pairs=plans.map(p=>({zh:rows.find(r=>r.item.id===p.id).item.getField('publicationTitle'),en:p.values.journal}));
             try{await this.learnJournals(pairs);}catch(e){Zotero.logError(e);}
-            status.textContent=`已创建 ${result.created.length} 条英文引用条目，跳过 ${result.skipped.length} 条已关联条目。英文投稿：Word 中选择英文条目。双语投稿：选择中文原条目和“关联双语”样式。可从原条目的「相关」中打开英文条目；已有引用不会自动替换。`;
+            status.textContent=`已创建 ${result.created.length} 条、更新 ${result.updated?.length || 0} 条英文引用条目，跳过 ${result.skipped.length} 条已关联条目。英文投稿：Word 中选择英文条目。双语投稿：选择中文原条目和“关联双语”样式。可从原条目的「相关」中打开英文条目；已有引用不会自动替换。`;
             save.textContent='已完成';save.disabled=true;doc.getElementById('cancel').textContent='关闭';
             return;
           }

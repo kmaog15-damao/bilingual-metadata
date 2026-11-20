@@ -26,14 +26,14 @@ var BilingualEnglishItems = {
   },
   async create(plans) {
     for(const plan of plans) this.validate(plan.values);
-    const created=[],skipped=[];
+    const created=[],skipped=[],updated=[];
     await Zotero.DB.executeTransaction(async()=>{
       for(const plan of plans) {
         const source=await Zotero.Items.getAsync(plan.id);
         if(!source || source.deleted || source.key!==plan.key || source.libraryID!==plan.libraryID || source.itemType!=='journalArticle') throw Error('原条目已变化，请关闭窗口后重新执行。');
         if(!Zotero.Libraries.get(source.libraryID)?.editable) throw Error('原条目所在文库不可编辑。');
         const existing=await this.find(source);
-        if(existing){skipped.push({source:source.key,id:existing.id});continue;}
+        if(existing){if(plan.updateExisting){existing.setField('title',plan.values.title.trim());existing.setField('publicationTitle',plan.values.journal.trim());existing.setCreators(this.creators(plan.values.authors));await existing.save();updated.push(existing.id);}else skipped.push({source:source.key,id:existing.id});continue;}
         const item=new Zotero.Item('journalArticle');
         item.libraryID=source.libraryID;
         for(const field of this.fields) {const value=source.getField(field);if(value)item.setField(field,value);}
@@ -50,7 +50,7 @@ var BilingualEnglishItems = {
         created.push(item.id);
       }
     });
-    if(typeof BilingualLinkedCitations!=='undefined' && BilingualLinkedCitations.installed)try{await BilingualLinkedCitations.refresh(created);}catch(e){Zotero.logError(e);}
-    return {created,skipped};
+    if(typeof BilingualLinkedCitations!=='undefined' && BilingualLinkedCitations.installed)try{await BilingualLinkedCitations.refresh([...created,...updated]);}catch(e){Zotero.logError(e);}
+    return {created,skipped,updated};
   }
 };
