@@ -58,10 +58,26 @@ var BilingualStyleAdapter = {
       for(const old of children(names).filter(n=>n.localName==='et-al'))names.removeChild(old);
       const etal=make('et-al');etal.setAttribute('term','and others');names.insertBefore(etal,children(names).find(n=>n.localName==='substitute') || null);
     }
+    for(const names of rendered('names').filter(n=>n.getAttribute('variable')==='author')){
+      for(const old of children(names).filter(n=>n.localName==='et-al'))names.removeChild(old);
+      const etal=make('et-al');etal.setAttribute('term','et-al');names.insertBefore(etal,children(names).find(n=>n.localName==='substitute')||null);
+    }
     let locale=all('locale').find(n=>!n.getAttribute('xml:lang'));
     if(!locale){locale=make('locale');root.insertBefore(locale,all('macro')[0] || all('citation')[0] || bib);}
     let terms=children(locale).find(n=>n.localName==='terms');if(!terms){terms=make('terms');locale.appendChild(terms);}
     let etal=children(terms).find(n=>n.getAttribute('name')==='and others');if(!etal){etal=make('term');etal.setAttribute('name','and others');terms.appendChild(etal);}etal.textContent='et al.';
+    // Separate the standard Chinese et-al term from the English translation's
+    // explicit "and others" term. Set both in every locale to prevent overrides.
+    for(const loc of all('locale')){
+      let ts=children(loc).find(n=>n.localName==='terms');
+      if(!ts){ts=make('terms');loc.appendChild(ts);}
+      const lang=loc.getAttribute('xml:lang')||root.getAttribute('default-locale')||'zh-CN';
+      for(const [key,value] of [['and others','et al.'],['et-al',/^en\b/i.test(lang)?'et al.':'等']]){
+        let term=children(ts).find(n=>n.getAttribute('name')===key);
+        if(!term){term=make('term');term.setAttribute('name',key);ts.appendChild(term);}
+        term.textContent=value;
+      }
+    }
     const originalBody=body.cloneNode(true);
     if(options.chineseLabel){const label=make('text');label.setAttribute('value','（中文文献）');body.appendChild(label);}
     for(const child of children(layout))if(!numbering.includes(child))layout.removeChild(child);
