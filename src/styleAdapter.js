@@ -49,6 +49,26 @@ var BilingualStyleAdapter = {
     // Older user styles treated original-author as one plain string, which
     // bypasses name separators, initials and et-al. Feed structured creators.
     const rendered=name=>[...all(name),...Array.from(english.getElementsByTagNameNS(ns,name))];
+    // CSL title-casing can lowercase proper nouns in English titles. Preserve
+    // the capitalization supplied by the linked English metadata record.
+    for(const node of Array.from(english.getElementsByTagNameNS(ns,'text'))){
+      if(['title','original-title'].includes(node.getAttribute('variable'))){node.removeAttribute('text-case');node.removeAttribute('macro');}
+    }
+    const englishMacros=new Set();
+    const visitEnglishMacros=node=>{
+      if(node.hasAttribute?.('macro')){
+        const name=node.getAttribute('macro');if(englishMacros.has(name))return;englishMacros.add(name);
+        const macro=all('macro').find(m=>m.getAttribute('name')===name);
+        if(macro)visitEnglishMacros(macro);
+      }
+      for(const child of children(node))visitEnglishMacros(child);
+    };
+    visitEnglishMacros(english);
+    for(const name of englishMacros){
+      const macro=all('macro').find(m=>m.getAttribute('name')===name);
+      for(const node of Array.from(macro?.getElementsByTagNameNS(ns,'text')||[]))
+        if(['title','original-title'].includes(node.getAttribute('variable')))node.removeAttribute('text-case');
+    }
     for(const node of rendered('text').filter(n=>n.getAttribute('variable')==='original-author')){
       const names=make('names');names.setAttribute('variable','original-author');
       for(const attr of ['prefix','suffix','font-style','font-weight'])if(node.hasAttribute(attr))names.setAttribute(attr,node.getAttribute(attr));
